@@ -13,6 +13,7 @@ require('dotenv').config();
 const io = socketIO(server);
 const port = process.env.PORT || 5001;
 
+// Handle incoming Websocket connections
 io.on('connection', (socket) => {
   console.log('New connection has been established with the socket.io server');
   socket.on('createGame', (data) => {
@@ -20,9 +21,12 @@ io.on('connection', (socket) => {
     const gameId = createId();
     const player = createPlayer(socket.id, data.name, gameId, 'X');
     const game = createGame(gameId, player.id, null);
+    socket.emit('playerCreated', player);
   });
 
-  socket.on('joinGame', (data) => {});
+  socket.on('joinGame', (data) => {
+    console.log(data);
+  });
 
   socket.on('disconnect', () => {
     console.log('Client has disconnected');

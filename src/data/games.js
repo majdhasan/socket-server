@@ -5,7 +5,7 @@ const createGame = (id, player1, player2) => {
     id,
     player1,
     player2,
-    playerTurn,
+    playerTurn: player1,
     playBoard: Array(9).fill(null),
     status: 'waiting',
     winner: null,
