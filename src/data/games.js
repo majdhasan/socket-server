@@ -1,0 +1,18 @@
+const games = [];
+
+const createGame = (id, player1, player2) => {
+  const game = {
+    id,
+    player1,
+    player2,
+    playerTurn,
+    playBoard: Array(9).fill(null),
+    status: 'waiting',
+    winner: null,
+  };
+
+  games.push(game);
+  return game;
+};
+
+module.exports = { createGame };
