@@ -21,7 +21,7 @@ io.on('connection', (socket) => {
     const gameId = createId();
     const player = createPlayer(socket.id, data.name, gameId, 'X');
     const game = createGame(gameId, player.id, null);
-    socket.emit('playerCreated', player);
+    socket.emit('playerCreated', { player, game });
   });
 
   socket.on('joinGame', (data) => {
