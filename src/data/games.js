@@ -24,12 +24,18 @@ const getGameIndex = (gameId) => {
 const updateGame = (gameId, boxIndex, playerId) => {
   const gameIndex = getGameIndex(gameId);
   const game = games[gameIndex];
-  const symbol = game.player1 === playerId ? 'X' : 'O';
+  const symbol = games[gameIndex].player1 === playerId ? 'X' : 'O';
 
-  if (game.player2 && game.player1 && game.playerTurn == playerId) {
-    game.playBoard[boxIndex] = symbol;
+  if (
+    games[gameIndex].player2 &&
+    games[gameIndex].player1 &&
+    games[gameIndex].playerTurn == playerId
+  ) {
+    console.log('entered');
+    games[gameIndex].playBoard[boxIndex] = symbol;
     switchTurn(gameIndex);
-    return game;
+    console.log(games[gameIndex]);
+    return games[gameIndex];
   }
   return false;
 };
@@ -43,6 +49,15 @@ const switchTurn = (gameIndex) => {
 const addPlayerToGame = (playerId, gameId) => {
   const gameIndex = getGameIndex(gameId);
   games[gameIndex].player2 = playerId;
+  games[gameIndex].status = 'started';
+
+  return games[gameIndex];
 };
 
-module.exports = { createGame, updateGame, addPlayerToGame };
+const leaveGame = (playerId, gameId) => {
+  const gameIndex = getGameIndex(gameId);
+  games[gameIndex].status = 'left';
+  return games[gameIndex];
+};
+
+module.exports = { createGame, updateGame, addPlayerToGame, leaveGame };

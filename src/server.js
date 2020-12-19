@@ -3,7 +3,12 @@ const socketIO = require('socket.io');
 const server = http.createServer();
 const morgan = require('morgan');
 const { createId } = require('./utils/helpers');
-const { createGame, updateGame } = require('./data/games');
+const {
+  createGame,
+  updateGame,
+  addPlayerToGame,
+  leaveGame,
+} = require('./data/games');
 const { createPlayer } = require('./data/players');
 
 // initialize dotenv
@@ -18,7 +23,6 @@ io.on('connection', (socket) => {
   console.log('New connection has been established with the socket.io server');
 
   socket.on('createGame', (data) => {
-    console.log(data);
     const gameId = createId();
     const player = createPlayer(socket.id, data.name, gameId, 'X');
     const game = createGame(gameId, player.id, null);
@@ -27,19 +31,24 @@ io.on('connection', (socket) => {
   });
 
   socket.on('joinGame', (data) => {
-    console.log(data);
+    const player = createPlayer(socket.id, data.name, data.gameId, 'O');
+    const game = addPlayerToGame(socket.id, data.gameId);
+    socket.emit('playerCreated', { player });
+    socket.emit('gameJoined', { game });
+    io.emit('gameUpdated', { game });
   });
 
   socket.on('updateGame', (data) => {
     const { gameId, playerId, box } = data;
-    const result = updateGame(gameId, parseInt(box), playerId);
-    if (result) {
-      socket.emit('gameUpdated', { game: result });
+    console.log('box', box);
+    const game = updateGame(gameId, parseInt(box), playerId);
+    if (game) {
+      io.emit('gameUpdated', { game });
     }
   });
 
   socket.on('disconnect', () => {
-    console.log('Client has disconnected');
+    console.log('Player left');
   });
 });
 
